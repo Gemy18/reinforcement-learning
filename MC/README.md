@@ -1,49 +1,49 @@
-## Model-Free Prediction & Control with Monte Carlo (MC)
-
+## Deep Q-Learning
 
 ### Learning Goals
 
-- Understand the difference between Prediction and Control
-- Know how to use the MC method for predicting state values and state-action values
-- Understand the on-policy first-visit MC control algorithm
-- Understand off-policy MC control algorithms
-- Understand Weighted Importance Sampling
-- Understand the benefits of MC algorithms over the Dynamic Programming approach
+- Understand the Deep Q-Learning (DQN) algorithm
+- Understand why Experience Replay and a Target Network are necessary to make Deep Q-Learning work in practice
+- (Optional) Understand Double Deep Q-Learning
+- (Optional) Understand Prioritized Experience Replay
 
 
 ### Summary
 
-- Dynamic Programming approaches assume complete knowledge of the environment (the MDP). In practice, we often don't have full knowledge of how the world works.
-- Monte Carlo (MC) methods can learn directly from experience collected by interacting with the environment. An episode of experience is a series of `(State, Action, Reward, Next State)` tuples.
-- MC methods work based on episodes. We sample episodes of experience and make updates to our estimates at the end of each episode. MC methods have high variance (due to lots of random decisions within an episode) but are unbiased.
-- MC Policy Evaluation: Given a policy, we want to estimate the state-value function V(s). Sample episodes of experience and estimate V(s) to be the reward received from that state onwards averaged across all of your experience. The same technique works for the action-value function Q(s, a). Given enough samples, this is proven to converge.
-- MC Control: Idea is the same as for Dynamic Programming. Use MC Policy Evaluation to evaluate the current policy then improve the policy greedily. The Problem: How do we ensure that we explore all states if we don't know the full environment?
-- Solution to exploration problem: Use epsilon-greedy policies instead of full greedy policies. When making a decision act randomly with probability epsilon. This will learn the optimal epsilon-greedy policy.
-- Off-Policy Learning: How can we learn about the actual optimal (greedy) policy while following an exploratory (epsilon-greedy) policy? We can use importance sampling, which weighs returns by their probability of occurring under the policy we want to learn about.
+- DQN: Q-Learning but with a Deep Neural Network as a function approximator.
+- Using a non-linear Deep Neural Network is powerful, but training is unstable if we apply it naively.
+- Trick 1 - Experience Replay: Store experience `(S, A, R, S_next)` in a replay buffer and sample minibatches from it to train the network. This decorrelates the data and leads to better data efficiency. In the beginning, the replay buffer is filled with random experience.
+- Trick 2 - Target Network: Use a separate network to estimate the TD target. This target network has the same architecture as the function approximator but with frozen parameters. Every T steps (a hyperparameter) the parameters from the Q network are copied to the target network. This leads to more stable training because it keeps the target function fixed (for a while).
+- By using a Convolutional Neural Network as the function approximator on raw pixels of Atari games where the score is the reward we can learn to play many of those games at human-like performance.
+- Double DQN: Just like regular Q-Learning, DQN tends to overestimate values due to its max operation applied to both selecting and estimating actions. We get around this by using the Q network for selection and the target network for estimation when making updates.
 
 
 ### Lectures & Readings
 
 **Required:**
 
-- [Reinforcement Learning: An Introduction](https://webdocs.cs.ualberta.ca/~sutton/book/bookdraft2016sep.pdf) - Chapter 5: Monte Carlo Methods
-
+- [Human-Level Control through Deep Reinforcement Learning](http://www.readcube.com/articles/10.1038/nature14236)
+- [Demystifying Deep Reinforcement Learning](https://www.nervanasys.com/demystifying-deep-reinforcement-learning/)
+- David Silver's RL Course Lecture 6 - Value Function Approximation ([video](https://www.youtube.com/watch?v=UoPei5o4fps), [slides](http://www0.cs.ucl.ac.uk/staff/d.silver/web/Teaching_files/FA.pdf))
 
 **Optional:**
 
-- David Silver's RL Course Lecture 4 - Model-Free Prediction ([video](https://www.youtube.com/watch?v=PnHCvfgC_ZA), [slides](http://www0.cs.ucl.ac.uk/staff/d.silver/web/Teaching_files/MC-TD.pdf))
-- David Silver's RL Course Lecture 5 - Model-Free Control ([video](https://www.youtube.com/watch?v=0g4j2k_Ggc4), [slides](http://www0.cs.ucl.ac.uk/staff/d.silver/web/Teaching_files/control.pdf))
+- [Using Keras and Deep Q-Network to Play FlappyBird](https://yanpanlau.github.io/2016/07/10/FlappyBird-Keras.html)
+- [Deep Reinforcement Learning with Double Q-learning](http://arxiv.org/abs/1509.06461)
+- [Prioritized Experience Replay](http://arxiv.org/abs/1511.05952)
 
+**Deep Learning:**
+
+- [Tensorflow](http://www.tensorflow.org)
+- [Deep Learning Books](http://www.deeplearningbook.org/)
 
 ### Exercises
 
-- [Get familiar with the Blackjack environment (Blackjack-v0)](Blackjack Playground.ipynb)
-- Implement the Monte Carlo Prediction to estimate state-action values
-  - [Exercise](MC Prediction.ipynb)
-  - [Solution](MC Prediction Solution.ipynb)
-- Implement the on-policy first-visit Monte Carlo Control algorithm
-  - [Exercise](MC Control with Epsilon-Greedy Policies.ipynb)
-  - [Solution](MC Control with Epsilon-Greedy Policies Solution.ipynb)
-- Implement the off-policy every-visit Monte Carlo Control using Weighted Important Sampling algorithm
-  - [Exercise](Off-Policy MC Control with Weighted Importance Sampling.ipynb)
-  - [Solution](Off-Policy MC Control with Weighted Importance Sampling Solution.ipynb)
+- [OpenAI Gym Atari Environment Playground](Breakout Playground.ipynb)
+- Deep-Q Learning for Atari Games
+  - [Exercise](Deep Q Learning.ipynb)
+  - [Solution](Deep Q Learning Solution.ipynb)
+- Double-Q Learning
+  - This is a minimal change to Q-Learning so use the same exercise as above
+  - [Solution](Double DQN Solution.ipynb)
+- Prioritized Experience Replay (WIP)
